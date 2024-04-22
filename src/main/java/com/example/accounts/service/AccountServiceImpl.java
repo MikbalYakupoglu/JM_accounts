@@ -16,7 +16,6 @@ import com.example.accounts.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -46,9 +45,6 @@ public class AccountServiceImpl implements AccountService {
         if (dbCustomer.isPresent()) {
             throw new CustomerAlreadyExistsException(CustomerConstants.CUSTOMER_MOBILE_ALREADY_EXISTS);
         }
-
-        customer.setCreatedAt(LocalDateTime.now());
-        customer.setCreatedBy("admin");
 
         Customer savedCustomer = customerRepository.save(customer);
         accountRepository.save(createNewAccount(savedCustomer));
@@ -109,8 +105,6 @@ public class AccountServiceImpl implements AccountService {
         newAccount.setAccountNumber(randomAccNumber);
         newAccount.setAccountType(AccountConstants.SAVINGS);
         newAccount.setBranchAddress(AccountConstants.ADDRESS);
-        newAccount.setCreatedAt(LocalDateTime.now());
-        newAccount.setCreatedBy("admin");
 
         return newAccount;
     }
