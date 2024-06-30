@@ -2,6 +2,7 @@ package com.example.accounts.controller;
 
 import com.example.accounts.constants.AccountConstants;
 import com.example.accounts.constants.ServerConstants;
+import com.example.accounts.dto.AccountContactInfoDto;
 import com.example.accounts.dto.CustomerDto;
 import com.example.accounts.dto.ErrorResponseDto;
 import com.example.accounts.dto.ResponseDto;
@@ -15,6 +16,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,11 +31,19 @@ import org.springframework.web.bind.annotation.*;
 public class AccountsController {
 
     private final AccountService accountService;
+    private final Environment environment;
+    private final AccountContactInfoDto accountContactInfoDto;
 
     @Autowired
-    public AccountsController(AccountService accountService) {
+    public AccountsController(AccountService accountService, Environment environment, AccountContactInfoDto accountContactInfoDto) {
         this.accountService = accountService;
+        this.environment = environment;
+        this.accountContactInfoDto = accountContactInfoDto;
     }
+
+    @Value("${build.version}")
+    private String buildVersion;
+    
 
 
     @Operation(
@@ -109,6 +120,27 @@ public class AccountsController {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ResponseDto(ServerConstants.INTERNAL_SERVER_ERROR));
+    }
+
+    @GetMapping("/build-info")
+    public ResponseEntity<String> getBuildInfo(){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(buildVersion);
+    }
+
+    @GetMapping("/java-version")
+    public ResponseEntity<String> getJavaVersion(){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(environment.getProperty("java.version"));
+    }
+
+    @GetMapping("/contact-info")
+    public ResponseEntity<AccountContactInfoDto> getContactInfo(){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(accountContactInfoDto);
     }
 }
 

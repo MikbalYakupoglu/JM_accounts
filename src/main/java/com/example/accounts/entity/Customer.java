@@ -10,6 +10,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @Getter@Setter
 @AllArgsConstructor@NoArgsConstructor
+@Table(name = "customers")
 public class Customer extends BaseEntity {
 
     @Id

@@ -1,4 +1,4 @@
-package com.example.accounts.service;
+package com.example.accounts.service.impl;
 
 import com.example.accounts.constants.AccountConstants;
 import com.example.accounts.constants.CustomerConstants;
@@ -13,6 +13,7 @@ import com.example.accounts.mapper.AccountMapper;
 import com.example.accounts.mapper.CustomerMapper;
 import com.example.accounts.repository.AccountRepository;
 import com.example.accounts.repository.CustomerRepository;
+import com.example.accounts.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
