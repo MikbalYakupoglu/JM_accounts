@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "CRUD REST API for Account Microservice")
 @RestController
-@RequestMapping(path = "/api/v1/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
 @Validated
 public class AccountsController {
 
