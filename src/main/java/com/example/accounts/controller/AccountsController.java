@@ -7,6 +7,7 @@ import com.example.accounts.dto.CustomerDto;
 import com.example.accounts.dto.ErrorResponseDto;
 import com.example.accounts.dto.ResponseDto;
 import com.example.accounts.service.AccountService;
+import io.github.resilience4j.retry.annotation.Retry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,6 +16,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -40,6 +43,8 @@ public class AccountsController {
         this.environment = environment;
         this.accountContactInfoDto = accountContactInfoDto;
     }
+
+    private static final Logger logger = LogManager.getLogger(AccountsController.class);
 
     @Value("${build.version}")
     private String buildVersion;
@@ -122,6 +127,7 @@ public class AccountsController {
                 .body(new ResponseDto(ServerConstants.INTERNAL_SERVER_ERROR));
     }
 
+    @Retry(name = "getBuildInfo", fallbackMethod = "getBuildInfoFallback")
     @GetMapping("/build-info")
     public ResponseEntity<String> getBuildInfo(){
         return ResponseEntity
@@ -141,6 +147,14 @@ public class AccountsController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(accountContactInfoDto);
+    }
+
+    private ResponseEntity<String> getBuildInfoFallback(Throwable throwable){
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(throwable.getLocalizedMessage() != null && !throwable.getLocalizedMessage().isEmpty()
+                        ? throwable.getLocalizedMessage()
+                        : "Build info is not available at the moment. Please try again later.");
     }
 }
 
